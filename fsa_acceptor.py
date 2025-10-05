@@ -1,6 +1,7 @@
 import re
 
-FSA ={}
+RESULTS = {}
+FSA = {}
 START_STATE = ''
 FINAL_STATE = ''
 
@@ -24,8 +25,8 @@ def createFSA(rule):
     else:
         FSA[initial_state] = {next_state: unit}
 
-def read_input(input_text):
-    with open(input_text, 'r', encoding='utf8') as file:
+def read_fsa_rules(fsa_rules):
+    with open(fsa_rules, 'r', encoding='utf8') as file:
         rules = file.readlines()
         global FINAL_STATE, START_STATE
         FINAL_STATE = rules.pop(0).strip()
@@ -61,12 +62,25 @@ def validate_input(input, current_state):
     
     return current_state == FINAL_STATE
 
+def read_input(input_file):
+     with open(input_file, 'r', encoding='utf8') as file:
+        lines = file.readlines()
+        for line in lines:
+            stripped_line = line.strip()
+            clean_line = re.sub(r"\"|\"", "", stripped_line)
+            input_array = clean_line.split(" ")
+            isValidInput = validate_input(input_array, START_STATE)
+            RESULTS[stripped_line] =  "yes" if isValidInput else "no"
+
+def print_results():
+    for key, value in RESULTS.items():
+        print(f"{key} => {value}")
+
 def main():
-    fsa_definition = './dfa1.txt'
-    input = "a" "a" 
-    read_input(fsa_definition)
-    isValidInput = validate_input(input, START_STATE)
 
-    print("!!!", isValidInput)
-
+    fsa_definition = './fsa_1.txt'
+    input_file = "./ex.txt"
+    read_fsa_rules(fsa_definition)
+    read_input(input_file)
+    print_results()
 main()
