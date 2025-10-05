@@ -28,8 +28,8 @@ def read_input(input_text):
     with open(input_text, 'r', encoding='utf8') as file:
         rules = file.readlines()
         global FINAL_STATE, START_STATE
-        FINAL_STATE = rules.pop(0)
-        START_STATE = rules[0].split("(")[1]
+        FINAL_STATE = rules.pop(0).strip()
+        START_STATE = rules[0].split("(")[1].strip()
         for rule in rules:
             createFSA(rule.strip())
         
@@ -39,26 +39,34 @@ def read_input(input_text):
 # Check that all chars in the string are permissible in the FSA
 # Check that initial char is a permissible q0
 # Check that final char is permissibile qfinal
-def validate_input(input):
-   FSA
-   for char in input:
-       print(char)
 
-# WITH FSA
-# start with setting the node
-# get first char
-# see if the initial node has an endpoints that take the char
-# if so, update the node to that node and get next char
+def find_matching_states(char, valid_movements):
+    valid_next_states = []
+    for key, values in valid_movements.items():
+        if char in values:
+            valid_next_states.append(key)
+    return valid_next_states
 
-
-# "a" "a" "b" --> False
+def validate_input(input, current_state):
+    valid_movements = FSA[current_state]
+    accepted_inputs = list(valid_movements.values())
+    flattened_list = [item for sublist in accepted_inputs for item in sublist]
+    for char in input:
+        if char in flattened_list:
+            next_state = find_matching_states(char, valid_movements)
+    #         # TODO: update to handle multiple valid next states
+            return validate_input(input[1:], next_state[0])
+        else:
+            return False
+    
+    return current_state == FINAL_STATE
 
 def main():
     fsa_definition = './dfa1.txt'
-    input = "a" "a" "b"
+    input = "a" "a" 
     read_input(fsa_definition)
-    validate_input(input)
-    print("!!!", START_STATE)
+    isValidInput = validate_input(input, START_STATE)
 
+    print("!!!", isValidInput)
 
 main()
